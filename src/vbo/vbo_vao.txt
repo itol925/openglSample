@@ -1,0 +1,48 @@
+/*
+ * 产生VAO
+ * n: 要产生VAO对象的数量
+ * arrays: 存放产生的VAO对象的名称
+ */
+void glGenVertexArrays(GLsizei n, GLuint *arrays);
+
+/*
+ * 绑定VAO
+ */
+void glBindVertexArray(GLuint array);
+
+/*
+ * 产生VBOs
+ */
+void glGenBuffers(GLsizei n, GLuint *buffers);
+
+/*
+ * 绑定VBOs
+ * target可选值： 
+ * GL_ARRAY_BUFFER（表示顶点数据)
+ * GL_ELEMENT_ARRAY_BUFFER（表示索引数据)
+ * GL_PIXEL_PACK_BUFFER（表示从OpenGL获取的的像素数据)
+ * GL_PIXEL_UNPACK_BUFFER（表示传递给OpenGL的像素数据）
+ */
+void glBindBuffer(GLenum target, GLuint buffer);
+
+/*
+ * 给VBO分配数据
+ */
+void glBufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage);
+
+/*
+ * 启用VAO中对应的顶点属性数组，用于定义存放顶点属性数据的数组
+ */
+void glEnableVertexAttribArray(GLuint index);
+
+/*
+ * 给对应的顶点属性数据指定数据
+ */
+void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normailized, stride, const GLvoid * pointer);
+
+//绑定VAO
+glBindVertexArray(vaoHandle);
+//解除绑定
+glBindVertexArray(0);
+
+
