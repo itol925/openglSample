@@ -1,3 +1,4 @@
+//g++ textfile.cpp main.cpp -framework opengl -lGLEW -lglfw3 -o run1
 #include "textfile.h"
 #include <gl/glew.h>
 #include <glfw/glfw3.h>
@@ -8,20 +9,20 @@ using namespace std;
 GLuint vShader, fShader;
 
 void printGLVersion(){
-	//const GLubyte *render = glGetString(GL_RENDERER);
-	//const GLubyte *vendor = glGetString(GL_VENDOR);
-	//const GLubyte *version = glGetString(GL_VERSION);
-	//const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+	const GLubyte *render = glGetString(GL_RENDERER);
+	const GLubyte *vendor = glGetString(GL_VENDOR);
+	const GLubyte *version = glGetString(GL_VERSION);
+	const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-	//GLint major, minor;
-	//glGetIntegerv(GL_MAJOR_VERSION, &major);
-	//glGetIntegerv(GL_MINOR_VERSION, &minor);
+	GLint major, minor;
+	glGetIntegerv(GL_MAJOR_VERSION, &major);
+	glGetIntegerv(GL_MINOR_VERSION, &minor);
 
-	//cout<< "GL vendor:			"<< vendor << endl;
-	//cout<< "GL Renderer:		"<< render << endl;
-	//cout<< "GL Version(string):	"<< version << endl;
-	//cout<< "GL Version(integer):"<< major << "." << minor << endl;
-	//cout<< "GLSL Version:		"<< glslVersion << endl;
+	cout<< "GL vendor:			"<< vendor << endl;
+	cout<< "GL Renderer:		"<< render << endl;
+	cout<< "GL Version(string):	"<< version << endl;
+	cout<< "GL Version(integer):"<< major << "." << minor << endl;
+	cout<< "GLSL Version:		"<< glslVersion << endl;
 }
 
 void initShader(const char * vShaderFile, const char * fShaderFile){
@@ -116,24 +117,33 @@ void initShader(const char * vShaderFile, const char * fShaderFile){
 	}
 }
 
-void Display(int width, int height){
+void Display(GLFWwindow * window, int width, int height){
 	float ratio = width / (float) height;
 	glViewport(0, 0, width, height);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-	glBegin(GL_TRIANGLES);
-	glColor3f(1.f, 0.f, 0.f);
-	glVertex3f(-0.6f, -0.4f, 0.f);
-	glColor3f(0.f, 1.f, 0.f);
-	glVertex3f(0.6f, -0.4f, 0.f);
-	glColor3f(0.f, 0.f, 1.f);
-	glVertex3f(0.f, 0.6f, 0.f);
-	glEnd();
+
+	while (!glfwWindowShouldClose(window)){
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+		glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
+		glBegin(GL_TRIANGLES);
+		glColor3f(1.f, 0.f, 0.f);
+		glVertex3f(-0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 1.f, 0.f);
+		glVertex3f(0.6f, -0.4f, 0.f);
+		glColor3f(0.f, 0.f, 1.f);
+		glVertex3f(0.f, 0.6f, 0.f);
+		glEnd();
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 }
 void error_cb(int error, const char* description){
 	fputs(description, stderr);
@@ -150,31 +160,17 @@ void key_cb(GLFWwindow* window, int key, int scancode, int action, int mods){
 				break;
 		}
 	}	
-
 }
 
-int Run(GLFWwindow * window, void (*display)(int, int)){
+void initGL(GLFWwindow * window){
 	if (!window){
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
-	while (!glfwWindowShouldClose(window)){
-		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
-
-		if(display){
-			display(width, height);
-		}
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	exit(EXIT_SUCCESS);
 }
+
 int main(){
 	if(!glfwInit()){
 		printf("run error: glfwinit error!\r");
@@ -183,7 +179,13 @@ int main(){
 	glfwSetErrorCallback(error_cb);
 	GLFWwindow * window = glfwCreateWindow(200, 200, "fuck my wife", NULL, NULL);
 	glfwSetKeyCallback(window, key_cb);
+	initGL(window);
+	printGLVersion();
 	initShader("basic.vert","basic.frag");
-	Run(window, Display);
+	Display(window, 300, 300);
+	glfwDestroyWindow(window);
+	glfwTerminate();
+	exit(EXIT_SUCCESS);
+
 	return 0;
 }
