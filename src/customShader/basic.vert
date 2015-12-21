@@ -1,12 +1,8 @@
-//强制要求支持一个特定版本的GLSL版本
-#version 400
+#version 150
 
-in vec3 VertexPosition;
-in vec3 VertexColor;
+in vec3 vert;
 
-out vec3 Color;
-
-void main(){
-	Color = VertexColor;
-	gl_Position = vec4(VertexPosition, 1.0);
+void main() {
+	gl_Position = vec4(vert, 1);
 }
+
